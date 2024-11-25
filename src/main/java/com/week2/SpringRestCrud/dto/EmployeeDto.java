@@ -1,5 +1,6 @@
 package com.week2.SpringRestCrud.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.week2.SpringRestCrud.annotations.DateValidation;
@@ -47,6 +48,7 @@ public class EmployeeDto {
     private Double salary;
 
     @PastOrPresent(message = "date of joining of employee should be past or present date not in future")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dateOfJoining;
 
 //    public void setDateOfJoining(@DateValidation String dateOfJoining){

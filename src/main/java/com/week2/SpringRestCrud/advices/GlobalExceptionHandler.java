@@ -15,15 +15,15 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> resourceNotFountExceptionHandler(ResourceNotFoundException exception){
+    public ResponseEntity<ApiResponse<?>> resourceNotFountExceptionHandler(ResourceNotFoundException exception){
         ApiError apiError = ApiError.builder()
                 .message(exception.getMessage())
                 .status(HttpStatus.NOT_FOUND).build();
-        return new ResponseEntity<>(apiError, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ApiResponse<>(apiError) , apiError.getStatus());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception){
+    public ResponseEntity<ApiResponse<?>> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception){
         List<String> subErrors = exception.getBindingResult()
                 .getAllErrors()
                 .stream().map(error-> error.getDefaultMessage())
@@ -32,11 +32,11 @@ public class GlobalExceptionHandler {
         ApiError apiError = ApiError.builder().message("given parameters are not valid")
                 .subErrors(subErrors).status(HttpStatus.BAD_REQUEST).build();
 
-        return new ResponseEntity<>(apiError, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApiResponse<>(apiError), apiError.getStatus());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiError> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException exception){
+    public ResponseEntity<ApiResponse<?>> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException exception){
         List<String> subErrors = List.of(exception.getLocalizedMessage());
 
         ApiError apiError = ApiError.builder()
@@ -44,17 +44,17 @@ public class GlobalExceptionHandler {
                 .subErrors(subErrors)
                 .status(HttpStatus.BAD_REQUEST)
                 .build();
-        return new ResponseEntity<>(apiError,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApiResponse<>(apiError), apiError.getStatus());
     }
 
     @ExceptionHandler(IntegerFormatException.class)
-    public ResponseEntity<ApiError> integerFormatExceptionHandler(IntegerFormatException exception){
+    public ResponseEntity<ApiResponse<?>> integerFormatExceptionHandler(IntegerFormatException exception){
         List<String> subErrors = List.of(exception.getMessage());
         ApiError apiError = ApiError.builder()
                 .message("we except only integers")
                 .subErrors(subErrors)
                 .status(HttpStatus.BAD_REQUEST)
                 .build();
-        return new ResponseEntity<>(apiError,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ApiResponse<>(apiError), apiError.getStatus());
     }
 }
