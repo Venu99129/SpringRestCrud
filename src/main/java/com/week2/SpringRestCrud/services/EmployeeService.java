@@ -1,5 +1,6 @@
 package com.week2.SpringRestCrud.services;
 
+import com.week2.SpringRestCrud.Exceptions.ResourceNotFoundException;
 import com.week2.SpringRestCrud.dto.EmployeeDto;
 import com.week2.SpringRestCrud.entities.EmployeeEntity;
 import com.week2.SpringRestCrud.repositorys.EmployeeRepository;
@@ -30,8 +31,7 @@ public class EmployeeService {
     }
 
     public Optional<EmployeeDto> findById(Long id){
-//        Optional<EmployeeEntity> fetchedEmployee =  employeeRepository.findById(id);
-//        fetchedEmployee.map(employeeEntity -> modelMapper.map(employeeEntity, EmployeeDto.class));
+        isExistsByEmployeeId(id);
 
         return employeeRepository.findById(id).map(employeeEntity -> modelMapper.map(employeeEntity, EmployeeDto.class));
     }
@@ -42,13 +42,13 @@ public class EmployeeService {
         return modelMapper.map(savedEmployeeEntity, EmployeeDto.class);
     }
 
-    public Boolean isExistsByEmployeeId(Long id){
-        return employeeRepository.existsById(id);
+    public void isExistsByEmployeeId(Long id){
+       boolean exists = employeeRepository.existsById(id);
+       if(!exists) throw new ResourceNotFoundException("no such employee fount with id :"+id);
     }
 
     public Boolean deleteEmployee(Long id){
-        boolean exists = isExistsByEmployeeId(id);
-        if(!exists) return false;
+        isExistsByEmployeeId(id);
         employeeRepository.deleteById(id);
         return true;
     }
@@ -61,8 +61,7 @@ public class EmployeeService {
     }
 
     public EmployeeDto updatePartialEmployee(Long employeeId, Map<String, Object> updates) {
-        boolean exists = isExistsByEmployeeId(employeeId);
-        if(!exists) return null;
+       isExistsByEmployeeId(employeeId);
         EmployeeEntity employee = employeeRepository.findById(employeeId).get();
         updates.forEach((field,value)->{
             Field fieldToUpdated = ReflectionUtils.findRequiredField(EmployeeEntity.class , field);

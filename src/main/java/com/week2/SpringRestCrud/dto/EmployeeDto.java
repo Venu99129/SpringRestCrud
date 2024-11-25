@@ -1,8 +1,10 @@
 package com.week2.SpringRestCrud.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.week2.SpringRestCrud.annotations.DateValidation;
 import com.week2.SpringRestCrud.annotations.EmployeeRoleValidation;
+import com.week2.SpringRestCrud.utils.IntegerValidatorDeserializer;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -29,6 +31,7 @@ public class EmployeeDto {
     @NotNull(message ="age of the employee cannot be null")
     @Max(value = 80 , message = "employee age cannot grater than 80")
     @Min(value =18 , message = "employee age cannot less than 18")
+    @JsonDeserialize(using = IntegerValidatorDeserializer.class)
     private Integer age;
 
     @NotBlank(message ="role of the employee cannot be null or blank")
